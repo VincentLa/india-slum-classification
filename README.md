@@ -27,4 +27,4 @@ $ python get-pip.py
 
 ### Installing python package dependencies
 Once you have pip, you can easily install all python package dependencies this repo requires to run by simply running:
-`pip3 install requirements.txt` on the root folder of the repo.
+`pip3 install -r requirements.txt` on the root folder of the repo in your terminal
