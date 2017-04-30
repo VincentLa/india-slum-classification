@@ -1,3 +1,4 @@
 *.png
 *.pickle
 *.tar.gz
+.DS_Store
