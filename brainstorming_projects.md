@@ -32,3 +32,5 @@
 
 Extract images from Google Satelites API?
 This stackoverflow [link](http://stackoverflow.com/questions/9087166/how-can-i-extract-a-satellite-image-from-google-maps-given-a-lat-long-rectangle) will likely be helpful.
+
+Google Static Maps Documentation: https://developers.google.com/maps/documentation/static-maps/intro?hl=en
