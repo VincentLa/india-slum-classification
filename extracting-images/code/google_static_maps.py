@@ -5,17 +5,11 @@ Read input file of latitude and longitude coordinates
 Writes output file with: ID, latitude, longitude, Static_maps_URL
 """
 
-from optparse import OptionParser
-
 import argparse
-import base64
 import csv
-import hashlib
-import hmac
 import os
-import sys
 import time
-import urllib
+import urllib.parse
 
 # Set url parameters
 # base URL="https://maps.googleapis.com/maps/api/staticmap?[parameters]"
@@ -49,8 +43,8 @@ def main():
     google_url = "http://maps.googleapis.com"
     api_service = "/maps/api/staticmap?"
     #clientID and privatekey from Google API for Work
-    client = "gme-harvarduniversity1"
-    privateKey = "fFINx5hoJ_ThkdXadWeIVbMD3d4="
+    # client = "gme-harvarduniversity1"
+    privateKey = os.getenv('GOOGLE_STATIC_MAPS_API')
     channel = ""
 
     # store starting date and time of batch and display to user
@@ -68,38 +62,27 @@ def main():
 
     # Set row number and wait increment to initial values
     file_num = 1
-    i = 0
 
     # read each row of coordinate pairs
     for row in file_read:
 
         # concatenate elements of row, separating with comma (x,y)
-        line = "".join(entry for entry in row)
+        line = ",".join(entry for entry in row)
         print('Image: %d, X,Y: %s' % (file_num, line))
 
         # Set full URL path by reading each row in the coords.csv (x,y) + parameters + signature
 
         # Generate valid signature
-        encodedParams = urllib.urlencode({
+        encodedParams = urllib.parse.urlencode({
             'center': line,
             'zoom': args.zoom,
             'size': args.size,
             'scale': args.scale,
             'maptype': args.maptype,
-            'client': client,
+            # 'client': client,
             'sensor': "false"
         })
-
-        # encdodedParams = urllib.urlencode("center=13.0628505,80.2764982&zoom=19&size=1024x1024&scale=2&maptype=satellite&key=
-        # decode the private key into its binary format
-        decodeKey = base64.urlsafe_b64decode(privateKey)
-        urltosign = api_service + encodedParams
-        # create a signature using the private key and the url encoded, string using HMAC SHA1. This signature will be binary.
-        signature = hmac.new(decodeKey, urltosign, hashlib.sha1)
-        # encode the binary signature into base64 for use within a URL
-        encodedsignature = base64.urlsafe_b64encode(signature.digest())
-        # Combine coordinates, parameters and signature into full url_path
-        signed_url = google_url + api_service + encodedParams + "&signature=" + encodedsignature
+        signed_url = google_url + api_service + encodedParams + "&key=" + privateKey
         # print final URL used
         print('%s\n' % signed_url)
 
