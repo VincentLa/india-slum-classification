@@ -8,8 +8,10 @@ Writes output file with: ID, latitude, longitude, Static_maps_URL
 import argparse
 import csv
 import os
+import requests
 import time
 import urllib.parse
+
 
 # Set url parameters
 # base URL="https://maps.googleapis.com/maps/api/staticmap?[parameters]"
@@ -58,6 +60,9 @@ def main():
     # Open the coords .csv (x,y)
     f_in = open(args.input_file, 'r')
     f_out = open(args.output_file, 'w')
+
+    # Need to put this inside the below for loop.
+    f_image = open('/Users/VincentLa/git/india-slum-classification/extracting-images/output/static.png','wb')
     file_read = csv.reader(f_in)
 
     # Set row number and wait increment to initial values
@@ -88,6 +93,8 @@ def main():
 
         # write row number, coordinates and unique key encoded URL to output file
         f_out.write("%d,%s,%s\n" % (file_num, line, signed_url))
+        f_image.write(requests.get(signed_url).content)
+        f_image.close()
 
         # increment file count after reading each row
         file_num += 1
